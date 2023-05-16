@@ -471,7 +471,7 @@ int main()
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
 		model = glm::translate(model, glm::vec3(0.0f, -2.0f / 10.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(30.0f / 10.0f, 1.0f, 30.0f / 10.0f));
+		model = glm::scale(model, glm::vec3(3.0f, 1.0f, 3.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
@@ -482,8 +482,8 @@ int main()
 
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
-		model = glm::translate(model, glm::vec3(0.0f, -1.8f / 10.0f, -1.5f / 10.0f));
-		model = glm::scale(model, glm::vec3(2.5f / 10.0f, 2.0f / 10.0f, 2.0f / 10.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.5f));
+		//model = glm::scale(model, glm::vec3(2.5f / 10.0f, 2.0f / 10.0f, 2.0f / 10.0f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		//meshList[2]->RenderMesh();
@@ -491,8 +491,8 @@ int main()
 
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
-		model = glm::translate(model, glm::vec3(-220.0f / 10.0f, -1.5f / 10.0f, -30.0f / 10.0f));
-		model = glm::scale(model, glm::vec3(0.05f / 10.0f, 0.05f / 10.0f, 0.05f / 10.0f));
+		model = glm::translate(model, glm::vec3(-22.0f, 0.0f, -3.0f));
+		//model = glm::scale(model, glm::vec3(0.05f / 10.0f, 0.05f / 10.0f, 0.05f / 10.0f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		//meshList[2]->RenderMesh();
@@ -500,8 +500,8 @@ int main()
 
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
-		model = glm::translate(model, glm::vec3(-220.0f / 10.0f, -2.5f / 10.0f, -100.0f / 10.0f));
-		model = glm::scale(model, glm::vec3(2.0f / 10.0f, 1.5f / 10.0f, 2.0f / 10.0f));
+		model = glm::translate(model, glm::vec3(-22.0f, 0.0f, -10.0f));
+		//model = glm::scale(model, glm::vec3(2.0f / 10.0f, 1.5f / 10.0f, 2.0f / 10.0f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		//meshList[2]->RenderMesh();
@@ -509,8 +509,8 @@ int main()
 
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
-		model = glm::translate(model, glm::vec3(-220.0f / 10.0f, -2.0f / 10.0f, -60.0f / 10.0f));
-		model = glm::scale(model, glm::vec3(0.05f / 10.0f, 0.05f / 10.0f, 0.05f / 10.0f));
+		model = glm::translate(model, glm::vec3(-22.0f, 0.0f, -6.0f));
+		//model = glm::scale(model, glm::vec3(0.05f / 10.0f, 0.05f / 10.0f, 0.05f / 10.0f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		//meshList[2]->RenderMesh();
@@ -518,8 +518,8 @@ int main()
 
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
-		model = glm::translate(model, glm::vec3(220.0f / 10.0f, -2.0f / 10.0f, -50.0f / 10.0f));
-		model = glm::scale(model, glm::vec3(0.05f / 10.0f, 0.05f / 10.0f, 0.05f / 10.0f));
+		model = glm::translate(model, glm::vec3(22.0f, 0.0f, -5.0f));
+		//model = glm::scale(model, glm::vec3(0.05f / 10.0f, 0.05f / 10.0f, 0.05f / 10.0f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		//meshList[2]->RenderMesh();
@@ -528,8 +528,8 @@ int main()
 		//Fuente 
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
-		model = glm::translate(model, glm::vec3(120.0f / 10.0f, -2.0f / 10.0f, -120.0f / 10.0f));
-		model = glm::scale(model, glm::vec3(0.25f / 10.0f, 0.25f / 10.0f, 0.25f / 10.0f));
+		model = glm::translate(model, glm::vec3(12.0f, 0.0f, -12.0f));
+		//model = glm::scale(model, glm::vec3(0.25f / 10.0f, 0.25f / 10.0f, 0.25f / 10.0f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		//meshList[2]->RenderMesh();
