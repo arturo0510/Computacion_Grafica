@@ -62,6 +62,7 @@ Model fuente;
 Model caballo;
 Model vaca;
 Model vela;
+Model arbusto;
 
 Skybox skybox;
 
@@ -341,7 +342,8 @@ int main()
 	vaca.LoadModel("Models/vaca.obj");
 	vela = Model();
 	vela.LoadModel("Models/vela.obj");
-
+	arbusto = Model();
+	arbusto.LoadModel("Models/arbusto.obj");
 
 	std::vector<std::string> skyboxFaces;
 	
@@ -579,7 +581,15 @@ int main()
 		//model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		vela.RenderModel();
-
+		
+		// estrella
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(0.76f, 7.1461f, -4.335f));
+		model = glm::rotate(model, -180.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		fuente.RenderModel();
+		
 		// arboles
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
@@ -645,7 +655,22 @@ int main()
 		model = glm::rotate(model, 45 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		arbol2.RenderModel();
-				
+		
+		// paja
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 20.0f));
+		model = glm::rotate(model, 45 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		arbusto.RenderModel();
+		
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(-20.5f, 0.0f, 1.0f));
+		model = glm::rotate(model, -135 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		arbusto.RenderModel();
+		
 		glDisable(GL_BLEND);
 
 		glUseProgram(0);
