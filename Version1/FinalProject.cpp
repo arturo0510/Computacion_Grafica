@@ -59,6 +59,9 @@ Model roca;
 Model valla;
 Model arbol2;
 Model fuente;
+Model caballo;
+Model vaca;
+Model vela;
 
 Skybox skybox;
 
@@ -324,18 +327,20 @@ int main()
 	
 	cabana_madera = Model();
 	cabana_madera.LoadModel("Models/cabana.obj");
-
 	roca = Model();
 	roca.LoadModel("Models/roca.obj");
-
 	valla = Model();
 	valla.LoadModel("Models/valla.obj");
-
 	arbol2 = Model();
 	arbol2.LoadModel("Models/arbol4.obj");
-
 	fuente = Model();
 	fuente.LoadModel("Models/fuente.obj");
+	caballo = Model();
+	caballo.LoadModel("Models/caballo.obj");
+	vaca = Model();
+	vaca.LoadModel("Models/vaca.obj");
+	vela = Model();
+	vela.LoadModel("Models/vela.obj");
 
 
 	std::vector<std::string> skyboxFaces;
@@ -483,57 +488,165 @@ int main()
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.5f));
-		//model = glm::scale(model, glm::vec3(2.5f / 10.0f, 2.0f / 10.0f, 2.0f / 10.0f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		//meshList[2]->RenderMesh();
 		cabana_madera.RenderModel();
 
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
 		model = glm::translate(model, glm::vec3(-22.0f, 0.0f, -3.0f));
-		//model = glm::scale(model, glm::vec3(0.05f / 10.0f, 0.05f / 10.0f, 0.05f / 10.0f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		//meshList[2]->RenderMesh();
 		roca.RenderModel();
 
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
 		model = glm::translate(model, glm::vec3(-22.0f, 0.0f, -10.0f));
-		//model = glm::scale(model, glm::vec3(2.0f / 10.0f, 1.5f / 10.0f, 2.0f / 10.0f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		//meshList[2]->RenderMesh();
 		valla.RenderModel();
+				
+		//vacas
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(-7.5f, 0.0f, -0.5f));
+		model = glm::rotate(model, glm::radians(-42.3f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		vaca.RenderModel();
+		
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(-17.8f, 0.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(43.6f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		vaca.RenderModel();
+		
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(10.0f, 0.0f, 15.0f));
+		model = glm::rotate(model, glm::radians(-118.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		vaca.RenderModel();
+		
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(-22.3f, 0.0f, -10.3f));
+		model = glm::rotate(model, 63.8f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		vaca.RenderModel();
+		
+		//caballos
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(11.0f, 0.0f, 3.0f));
+		model = glm::rotate(model, -204.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		caballo.RenderModel();
+		
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(-13.0f, 0.0f, 14.0f));
+		model = glm::rotate(model, -82.4f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		caballo.RenderModel();
+		
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(-13.2f, 0.0f, -15.2f));
+		model = glm::rotate(model, 28.4f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		caballo.RenderModel();
+		
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(8.0f, 0.0f, -13.5f));
+		model = glm::rotate(model, 60.5f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		caballo.RenderModel();
+		
+		//Fuente 
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(12.0f, 0.0f, -12.0f));
+		model = glm::rotate(model, -90.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		fuente.RenderModel();
 
+		//vela
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(0.0f, 2.3465f, -18.9925f));
+		//model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		vela.RenderModel();
+
+		// arboles
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
 		model = glm::translate(model, glm::vec3(-22.0f, 0.0f, -6.0f));
-		//model = glm::scale(model, glm::vec3(0.05f / 10.0f, 0.05f / 10.0f, 0.05f / 10.0f));
-		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, -45 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		//meshList[2]->RenderMesh();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		arbol2.RenderModel();
 
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
 		model = glm::translate(model, glm::vec3(22.0f, 0.0f, -5.0f));
-		//model = glm::scale(model, glm::vec3(0.05f / 10.0f, 0.05f / 10.0f, 0.05f / 10.0f));
-		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, -35 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		//meshList[2]->RenderMesh();
 		arbol2.RenderModel();
 
-		//Fuente 
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
-		model = glm::translate(model, glm::vec3(12.0f, 0.0f, -12.0f));
-		//model = glm::scale(model, glm::vec3(0.25f / 10.0f, 0.25f / 10.0f, 0.25f / 10.0f));
-		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(22.0f, 0.0f, -13.0f));
+		model = glm::rotate(model, 135 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		//meshList[2]->RenderMesh();
-		fuente.RenderModel();
+		arbol2.RenderModel();
+
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(22.0f, 0.0f, -20.0f));
+		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		arbol2.RenderModel();
+
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(22.0f, 0.0f, 3.5f));
+		model = glm::rotate(model, 180 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		arbol2.RenderModel();
+
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(22.0f, 0.0f, 11.0f));
+		model = glm::rotate(model, 225 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		arbol2.RenderModel();
+
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(22.0f, 0.0f, 20.0f));
+		model = glm::rotate(model, -225 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		arbol2.RenderModel();
+
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(-22.0f, 0.0f, 11.0f));
+		model = glm::rotate(model, -200 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		arbol2.RenderModel();
+
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(22.0f, 0.0f, -20.0f));
+		model = glm::rotate(model, 45 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		arbol2.RenderModel();
+				
+		glDisable(GL_BLEND);
 
 		glUseProgram(0);
 
