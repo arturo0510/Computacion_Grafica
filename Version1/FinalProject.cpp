@@ -93,6 +93,9 @@ Model vaca_cola2;
 Model vaca_cola3;
 Model vaca_pataFR, vaca_pataFL, vaca_pataBR, vaca_pataBL;
 
+// mariposa
+Model butterfly_body, butterfly_R, butterfly_L;
+
 // ----------------------------------- VARIABLES DE ANIMACION ----------------------------------
 // caballo
 float rotCola, rotColaPunta;
@@ -117,6 +120,10 @@ bool caminarVaca;
 float rotarVaca, rotarCabezaVaca;
 float rotPataVacaFR, rotPataVacaFL, rotPataVacaBR, rotPataVacaBL;
 float movVacaX, movVacaZ;
+
+// mariposa
+float rotaAlasButterfly, movMariposaX, movMariposaZ, movMariposaY;
+float rotaMariposaY, anguloMariposa;
 
 // ------------------------- CICLO DIA - NOCHE ---------------------------------
 int ciclos = 0;
@@ -565,6 +572,21 @@ void AnimateCow() {
 	}
 }
 
+void AnimateButterfly() {
+	if (rotaAlasButterfly >= 180.0f) rotaAlasButterfly = -180.0f;
+	else rotaAlasButterfly += 10.0f * deltaTime;
+
+	//3sin(2t) 0.0 < t < 2pi
+	if (anguloMariposa >= 180.0f) anguloMariposa = -180.0f;
+	else anguloMariposa += 0.5f * deltaTime;
+
+	movMariposaX = 8 * glm::sin(glm::radians(2 * anguloMariposa)) * glm::cos(glm::radians(anguloMariposa));
+	movMariposaZ = 8 * glm::sin(glm::radians(2 * anguloMariposa)) * glm::sin(glm::radians(anguloMariposa));
+
+	movMariposaY = (movMariposaX * movMariposaZ) / 4;
+
+}
+
 int main()
 {
 	mainWindow = Window(1366, 768); // 1280, 1024 or 1024, 768
@@ -659,6 +681,14 @@ int main()
 	vaca_pataBL = Model();
 	vaca_pataBL.LoadModel("Models/vaca_pataBL.obj");
 
+	//butterfly_body, butterfly_R, butterfly_L;
+	butterfly_body = Model();
+	butterfly_body.LoadModel("Models/butterfly_body.obj");
+	butterfly_R = Model();
+	butterfly_R.LoadModel("Models/butterfly_Right.obj");
+	butterfly_L = Model();
+	butterfly_L.LoadModel("Models/butterfly_Left.obj");
+
 	std::vector<std::string> skyboxFaces;
 	
 	skyboxFaces.push_back("Textures/Skybox/lado2.tga"); //bien 
@@ -676,7 +706,7 @@ int main()
 	// ----------------------------- ILUMINACION ----------------------------------------
 	//luz direccional, sólo 1 y siempre debe de existir LUZ DEL SOL 
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
-		0.1f, 0.3f,
+		1.0f, 0.3f,
 		0.0f, 0.0f, -1.0f);
 	////contador de luces puntuales
 	//unsigned int pointLightCount = 0;
@@ -757,6 +787,10 @@ int main()
 	caminarVaca = true;
 	movVacaX = 10.0f; movVacaZ = 0.0f;
 
+	// mariposa
+	rotaAlasButterfly = 0.0f;
+	movMariposaX = 0.0f; movMariposaZ = 0.0f;
+
 	// ------------- ILUMINACION -----------------
 	ciclos = 0;
 	dia = true;
@@ -769,14 +803,14 @@ int main()
 	////Loop mientras no se cierra la ventana
 	while (!mainWindow.getShouldClose())
 	{
-		if (ciclos >= CLOCKS_PER_SEC) {
+		/*if (ciclos >= CLOCKS_PER_SEC) {
 			if (dia) dia = false;
 			else dia = true;
 			ciclos = 0;
 		}
 		else ciclos++;
 		if (dia) mainLight.setIntensity(1.0f);
-		else mainLight.setIntensity(0.4f);
+		else mainLight.setIntensity(0.4f);*/
 
 		// Obtener tipo de camara
 		//    Camara normal
@@ -794,6 +828,7 @@ int main()
 
 		AnimateHorse();
 		AnimateCow();
+		AnimateButterfly();
 
 		if (first) {
 			rotCola = 0.0f;
@@ -812,6 +847,8 @@ int main()
 			rotaCola1XV = 0.0f; rotaCola2XV = 0.0f; rotaCola3XV = 0.0f;
 			rotPataVacaFR = 0.0f; rotPataVacaFL = 0.0f; rotPataVacaBR = 0.0f; rotPataVacaBL = 0.0f;
 			movVacaX = 10.0f; movVacaZ = 0.0f; rotarVaca = 0.0f;
+			rotaAlasButterfly = 0.0f;
+			movMariposaX = 0.0f; movMariposaZ = 0.0f, movMariposaY = 0.0f;
 			first = false;
 		}
 
@@ -1187,6 +1224,25 @@ int main()
 		model = glm::translate(model, glm::vec3(-2.8854f, 0.001f, 2.0531f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		piedras_piso.RenderModel();
+
+		// mariposa
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(0.0f, 10.0f, 15.0f));
+		model = glm::translate(model, glm::vec3(movMariposaX, movMariposaY, movMariposaZ));
+		model = glm::rotate(model, glm::radians(anguloMariposa), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		butterfly_body.RenderModel();
+		modelaux = model;
+
+		model = glm::rotate(model, PI * sin(glm::radians(rotaAlasButterfly)) / 4, glm::vec3(0.0f, 0.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		butterfly_R.RenderModel();
+
+		model = modelaux;
+		model = glm::rotate(model, PI * sin(glm::radians(-rotaAlasButterfly)) / 4, glm::vec3(0.0f, 0.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		butterfly_L.RenderModel();
 
 		// pasto
 		model = glm::mat4(1.0);
