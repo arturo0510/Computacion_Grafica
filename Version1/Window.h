@@ -22,6 +22,10 @@ public:
 	bool* getsKeys() { return keys; }
 	void swapBuffers() { return glfwSwapBuffers(mainWindow); }
 
+	// Metodos para obtener valores de banderas
+	bool getabrirBaul() { return abrirBaul; }
+	void setabriBaul(bool abrir) { abrirBaul = abrir; }
+
 	~Window();
 private:
 	GLFWwindow* mainWindow;
@@ -39,6 +43,10 @@ private:
 	GLfloat apagalinterna = 1;
 	GLfloat banderaposicion,tirar_d,reiniciar_d;
 	bool mouseFirstMoved;
+	
+	// Banderas por teclado
+	bool abrirBaul = false;
+
 	static void ManejaTeclado(GLFWwindow* window, int key, int code, int action, int mode);
 	static void ManejaMouse(GLFWwindow* window, double xPos, double yPos);
 

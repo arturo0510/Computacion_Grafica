@@ -37,6 +37,7 @@ int Window::Initialise()
 
 	//CREAR VENTANA
 	mainWindow = glfwCreateWindow(width, height, "Primer ventana", NULL, NULL);
+	glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if (!mainWindow)
 	{
@@ -114,6 +115,8 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 	{
 		theWindow->apagalinterna = -1.0;
 	}
+	// banderas por teclado
+	if (key == GLFW_KEY_B) theWindow->abrirBaul = true;
 
 	if (key >= 0 && key < 1024)
 	{

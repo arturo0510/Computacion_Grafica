@@ -70,6 +70,11 @@ Model estrella;
 Model baulCuerpo;
 Model baulTapa;
 Model piedras_piso;
+Model arco;
+Model valla2;
+Model molino;
+Model helice_molino;
+Model lamp;
 
 // caballo
 Model caballo_cabeza;
@@ -96,6 +101,9 @@ Model vaca_pataFR, vaca_pataFL, vaca_pataBR, vaca_pataBL;
 // mariposa
 Model butterfly_body, butterfly_R, butterfly_L;
 
+// aguila
+Model aguila_cuerpo, aguila_r, aguila_l;
+
 // ----------------------------------- VARIABLES DE ANIMACION ----------------------------------
 // caballo
 float rotCola, rotColaPunta;
@@ -115,9 +123,8 @@ bool condPataBR[2] = { false, false }, condPataBL[2] = { false, false };
 // vaca
 float rotaCola1ZV, rotaCola2ZV, rotaCola3ZV;
 float rotaCola1XV, rotaCola2XV, rotaCola3XV;
-int accionColaV, avanzarVaca, numeroPataVaca;
-bool caminarVaca;
-float rotarVaca, rotarCabezaVaca;
+int accionColaV;
+float rotarVaca;
 float rotPataVacaFR, rotPataVacaFL, rotPataVacaBR, rotPataVacaBL;
 float movVacaX, movVacaZ;
 
@@ -125,11 +132,21 @@ float movVacaX, movVacaZ;
 float rotaAlasButterfly, movMariposaX, movMariposaZ, movMariposaY;
 float rotaMariposaY, anguloMariposa;
 
+// aguila - baul
+float rotaAlasAguila, movAguilaZ, movAguilaY;
+float rotaTapaBaul, rotaAguila;
+bool animAguila, openTapa, regresaAguila, arribaAlas;
+
+//molino
+float mov_mol, mov_molof;
+int velocidad_mol;
+
 // ------------------------- CICLO DIA - NOCHE ---------------------------------
 int ciclos = 0;
 bool dia;
 
-Skybox skybox;
+Skybox skyboxdia;
+Skybox skyboxnoche;
 
 //materiales
 Material Material_brillante;
@@ -553,23 +570,17 @@ void AnimateCow() {
 		}
 		else rotaCola1XV += 3.0f * deltaTime;
 	}
-	if (caminarVaca == 1) {
-		//rotPataVacaFR = 0.0f; rotPataVacaFL = 0.0f; rotPataVacaBR = 0.0f; rotPataVacaBL = 0.0f;
-		if (rotPataVacaFL >= 180.0f) rotPataVacaFL = -180.0f;
-		else rotPataVacaFL += 3.0f * deltaTime;
-		if (rotPataVacaBR >= 180.0f) rotPataVacaBR = -180.0f;
-		else rotPataVacaBR += 3.0f * deltaTime;
-		if (rotPataVacaBL <= -180.0f) rotPataVacaBL = 180.0f;
-		else rotPataVacaBL -= 3.0f * deltaTime;
-		if (rotPataVacaFR <= -180.0f) rotPataVacaFR = 180.0f;
-		else rotPataVacaFR -= 3.0f * deltaTime;
-		rotarVaca += 0.15f * deltaTime;
-		movVacaX = 5 * cos(glm::radians(rotarVaca));
-		movVacaZ = 5 * sin(glm::radians(rotarVaca));
-	}
-	else {
-
-	}
+	if (rotPataVacaFL >= 180.0f) rotPataVacaFL = -180.0f;
+	else rotPataVacaFL += 3.0f * deltaTime;
+	if (rotPataVacaBR >= 180.0f) rotPataVacaBR = -180.0f;
+	else rotPataVacaBR += 3.0f * deltaTime;
+	if (rotPataVacaBL <= -180.0f) rotPataVacaBL = 180.0f;
+	else rotPataVacaBL -= 3.0f * deltaTime;
+	if (rotPataVacaFR <= -180.0f) rotPataVacaFR = 180.0f;
+	else rotPataVacaFR -= 3.0f * deltaTime;
+	rotarVaca += 0.15f * deltaTime;
+	movVacaX = 5 * cos(glm::radians(rotarVaca));
+	movVacaZ = 5 * sin(glm::radians(rotarVaca));
 }
 
 void AnimateButterfly() {
@@ -585,6 +596,107 @@ void AnimateButterfly() {
 
 	movMariposaY = (movMariposaX * movMariposaZ) / 4;
 
+}
+
+void AnimateEagle() {
+	if (mainWindow.getabrirBaul()) {
+		if (openTapa) {
+			if (rotaTapaBaul >= 90.0f) {
+				rotaTapaBaul = 90.0f;
+				animAguila = true;
+			}
+			else rotaTapaBaul += 3.0f * deltaTime;
+		}
+
+		if (animAguila) {
+			if (!regresaAguila) {
+
+				if (arribaAlas) {
+					if (rotaAlasAguila >= 30.0f) {
+						rotaAlasAguila = 30.0f;
+						arribaAlas = false;
+					}
+					else rotaAlasAguila += 10.0f * deltaTime;
+				}
+				else {
+					if (rotaAlasAguila <= -30.0f) {
+						rotaAlasAguila = -30.0f;
+						arribaAlas = true;
+					}
+					else rotaAlasAguila -= 10.0f * deltaTime;
+				}
+
+				if (movAguilaZ >= 20.0f) movAguilaZ = 20.0f;
+				else movAguilaZ += 0.2f * deltaTime;
+				if (movAguilaY >= 10.0f) movAguilaY = 10.0f;
+				else movAguilaY += 0.1f * deltaTime;
+
+				if (movAguilaZ == 20.0f && movAguilaY == 10.0f) {
+					if (rotaAguila >= 180.0f) {
+						rotaAguila = 180.0f;
+						regresaAguila = true;
+					}
+					else rotaAguila += 2.0f * deltaTime;
+				}
+			}
+
+			if (regresaAguila) {
+				if (movAguilaZ <= 0.0f) movAguilaZ = 0.0f;
+				else movAguilaZ -= 0.3f * deltaTime;
+				if (movAguilaY <= 0.0f) movAguilaY = 0.0f;
+				else movAguilaY -= 0.15f * deltaTime;
+
+				if (movAguilaZ == 0.0f && movAguilaY == 0.0f) {
+					if (rotaAguila <= 0.0f) {
+						rotaAguila = 0.0f;
+						regresaAguila = false;
+						openTapa = false;
+						animAguila = false;
+						rotaAlasAguila = 0.0f;
+					}
+					else { 
+						rotaAguila -= 2.0f * deltaTime;
+						if (arribaAlas) {
+							if (rotaAlasAguila >= 30.0f) {
+								rotaAlasAguila = 30.0f;
+								arribaAlas = false;
+							}
+							else rotaAlasAguila += 10.0f * deltaTime;
+						}
+						else {
+							if (rotaAlasAguila <= -30.0f) {
+								rotaAlasAguila = -30.0f;
+								arribaAlas = true;
+							}
+							else rotaAlasAguila -= 10.0f * deltaTime;
+						}
+					}
+				}
+			}
+		}
+
+		if (!openTapa) {
+			if (rotaTapaBaul <= 0.0f) {
+				rotaTapaBaul = 0.0f;
+				openTapa = true;
+				mainWindow.setabriBaul(false);
+			}
+			else rotaTapaBaul -= 3.0f * deltaTime;
+		}
+	}
+}
+
+void Animatemol() {
+	if (velocidad_mol == 1) mov_molof = 0.2;
+	else if (velocidad_mol == 2) mov_molof = 0.4;
+	else if (velocidad_mol == 3) mov_molof = 0.6;
+	else if (velocidad_mol == 4) mov_molof = 0.8;
+	else mov_molof = 1.0f;
+	if (mov_mol >= 360.0f) {
+		mov_mol = 0.0f;
+		velocidad_mol = (rand() % 5) + 1;
+	}
+	mov_mol += mov_molof * deltaTime;
 }
 
 int main()
@@ -636,6 +748,16 @@ int main()
 	baulTapa.LoadModel("Models/baul_tapa.obj");
 	piedras_piso = Model();
 	piedras_piso.LoadModel("Models/piedras_piso.obj");
+	arco = Model();
+	arco.LoadModel("Models/arco.obj");
+	valla2 = Model();
+	valla2.LoadModel("Models/valla2.obj");
+	molino = Model();
+	molino.LoadModel("Models/molino.obj");
+	helice_molino = Model();
+	helice_molino.LoadModel("Models/helice-molino.obj");
+	lamp = Model();
+	lamp.LoadModel("Models/lamp.obj");
 
 	caballo_cuerpo = Model();
 	caballo_cuerpo.LoadModel("Models/caballo_cuerpo.obj");
@@ -681,7 +803,6 @@ int main()
 	vaca_pataBL = Model();
 	vaca_pataBL.LoadModel("Models/vaca_pataBL.obj");
 
-	//butterfly_body, butterfly_R, butterfly_L;
 	butterfly_body = Model();
 	butterfly_body.LoadModel("Models/butterfly_body.obj");
 	butterfly_R = Model();
@@ -689,16 +810,34 @@ int main()
 	butterfly_L = Model();
 	butterfly_L.LoadModel("Models/butterfly_Left.obj");
 
-	std::vector<std::string> skyboxFaces;
-	
-	skyboxFaces.push_back("Textures/Skybox/lado2.tga"); //bien 
-	skyboxFaces.push_back("Textures/Skybox/lado4.tga"); //bien
-	skyboxFaces.push_back("Textures/Skybox/abajo.tga");
-	skyboxFaces.push_back("Textures/Skybox/arriba.tga"); // bien 
-	skyboxFaces.push_back("Textures/Skybox/lado1.tga"); //bien
-	skyboxFaces.push_back("Textures/Skybox/lado3.tga"); // bien 
+	aguila_cuerpo = Model();
+	aguila_cuerpo.LoadModel("Models/aguila_cuerpo.obj");
+	aguila_r = Model();
+	aguila_r.LoadModel("Models/aguila_Right.obj");
+	aguila_l = Model();
+	aguila_l.LoadModel("Models/aguila_left.obj");
 
-	skybox = Skybox(skyboxFaces);
+	std::vector<std::string> skyboxFacesdia;
+	
+	skyboxFacesdia.push_back("Textures/Skybox/lado2.tga"); //bien 
+	skyboxFacesdia.push_back("Textures/Skybox/lado4.tga"); //bien
+	skyboxFacesdia.push_back("Textures/Skybox/abajo.tga");
+	skyboxFacesdia.push_back("Textures/Skybox/arriba.tga"); // bien 
+	skyboxFacesdia.push_back("Textures/Skybox/lado1.tga"); //bien
+	skyboxFacesdia.push_back("Textures/Skybox/lado3.tga"); // bien
+
+	skyboxdia = Skybox(skyboxFacesdia);
+
+	std::vector<std::string> skyboxFacesnoche;
+
+	skyboxFacesnoche.push_back("Textures/Skybox/lado2-noche.tga"); //bien 
+	skyboxFacesnoche.push_back("Textures/Skybox/lado4-noche.tga"); //bien
+	skyboxFacesnoche.push_back("Textures/Skybox/abajo-noche.tga");
+	skyboxFacesnoche.push_back("Textures/Skybox/arriba-noche.tga"); // bien 
+	skyboxFacesnoche.push_back("Textures/Skybox/lado1-noche.tga"); //bien
+	skyboxFacesnoche.push_back("Textures/Skybox/lado3-noche.tga"); // bien 
+
+	skyboxnoche = Skybox(skyboxFacesnoche);
 
 	Material_brillante = Material(4.0f, 256);
 	Material_opaco = Material(0.3f, 4);
@@ -708,52 +847,53 @@ int main()
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
 		1.0f, 0.3f,
 		0.0f, 0.0f, -1.0f);
-	////contador de luces puntuales
-	//unsigned int pointLightCount = 0;
-	////Declaración de primer luz puntual
-	//pointLights[0] = PointLight(1.0f, 0.0f, 0.0f,
-	//	0.0f, 1.0f,
-	//	0.0f, 2.5f, 1.5f,
-	//	0.3f, 0.2f, 0.1f);
-	//pointLightCount++;
+	
+	unsigned int pointLightCount = 0;
+	pointLights[0] = PointLight(0.0f, 1.0f, 1.0f,
+		0.35f, 2.0f,
+		12.0f, 0.1f, 12.0f,
+		0.3f, 0.2f, 0.1f);
+	pointLightCount++;
 
-	//unsigned int spotLightCount = 0;
-	////linterna
-	//spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f,
-	//	0.0f, 2.0f,
-	//	0.0f, 0.0f, 0.0f,
-	//	0.0f, -1.0f, 0.0f,
-	//	1.0f, 0.0f, 0.0f,
-	//	5.0f);
-	//spotLightCount++;
+	pointLights[1] = PointLight(1.0f, 0.0f, 0.0f,
+		0.35f, 2.0f,
+		-21.8f, 4.7f, -15.4f,
+		0.3f, 0.2f, 0.1f);
+	pointLightCount++;
 
-	////luz de helicóptero
-	//spotLights[1] = SpotLight(1.0f, 0.0f, 1.0f,
-	//	0.0f, 2.0f,
-	//	-20.0f, 6.0f, -1.0,
-	//	0.0f, -5.0f, 0.0f,
-	//	1.0f, 0.0f, 0.0f,
-	//	30.0f);
-	//spotLightCount++;
+	pointLights[2] = PointLight(1.0f, 0.0f, 0.0f,
+		0.4f, 2.0f,
+		21.8f, 4.7f, 15.4f,
+		0.3f, 0.2f, 0.1f);
+	pointLightCount++;
 
-	////luz de faro
-	////Luz 1 del carro
-	//spotLights[2] = SpotLight(0.0f, 1.0f, 1.0f,
-	//	0.0f, 2.0f,
-	//	6.1f, -1.0f, -1.0f,
-	//	1.0f, -0.5f, 0.0f,
-	//	1.0f, 0.0f, 0.0f,
-	//	30.0f);
-	//spotLightCount++;
+	pointLights[3] = PointLight(1.0f, 0.0f, 0.0f,
+		0.4f, 2.0f,
+		21.8f, 4.7f, 0.4f,
+		0.3f, 0.2f, 0.1f);
+	pointLightCount++;
 
-	////Luz 2 del carro
-	//spotLights[3] = SpotLight(1.0f, 1.0f, 0.0f,
-	//	0.0f, 2.0f,
-	//	-20.0f, 2.0f, -2.0f,
-	//	-1.0f, -0.5f, 0.0f,
-	//	1.0f, 0.0f, 0.0f,
-	//	30.0f);
-	//spotLightCount++;
+	pointLights[4] = PointLight(1.0f, 0.0f, 0.0f,
+		0.4f, 2.0f,
+		21.8f, 4.7f, -15.4f,
+		0.3f, 0.2f, 0.1f);
+	pointLightCount++;
+
+	pointLights[5] = PointLight(1.0f, 1.0f, 0.0f,
+		1.5f, 2.0f,
+		0.4f, 6.7f, 4.5f,
+		0.3f, 0.2f, 0.1f);
+	pointLightCount++;
+
+	unsigned int spotLightCount = 0;
+	//linterna
+	spotLights[0] = SpotLight(0.0f, 1.0f, 1.0f,
+		0.0f, 2.0f,
+		-5.0f, 0.0f, 10.0f,
+		1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 0.0f,
+		10.0f);
+	spotLightCount++;
 
 	// ------------------------------ VARIABLES ANIMACION ----------------------------
 	// First sirve para evitar valores extraños en la primera ejecución
@@ -781,16 +921,25 @@ int main()
 	rotaCola1ZV = 0.0f; rotaCola2ZV = 0.0f; rotaCola3ZV = 0.0f;
 	rotaCola1XV = 0.0f; rotaCola2XV = 0.0f; rotaCola3XV = 0.0f;
 	accionColaV = (rand() % 6) + 1;
-	avanzarVaca = 1; numeroPataVaca = 0;
 	rotarVaca = 0.0f;
 	rotPataVacaFR = 0.0f; rotPataVacaFL = 0.0f; rotPataVacaBR = 0.0f; rotPataVacaBL = 0.0f;
-	caminarVaca = true;
 	movVacaX = 10.0f; movVacaZ = 0.0f;
 
 	// mariposa
 	rotaAlasButterfly = 0.0f;
 	movMariposaX = 0.0f; movMariposaZ = 0.0f;
 
+	// aguila
+	openTapa = true;
+	regresaAguila = false;
+	animAguila = false;
+	rotaAguila = 0.0f; rotaTapaBaul = 0.0f; movAguilaY = 0.0f; movAguilaZ = 0.0f;
+	rotaAlasAguila = 0.0f;
+	arribaAlas = true;
+
+	//molino
+	mov_mol = 0.0f; mov_molof = 0.2f;
+	velocidad_mol = (rand() % 5) + 1;
 	// ------------- ILUMINACION -----------------
 	ciclos = 0;
 	dia = true;
@@ -799,18 +948,19 @@ int main()
 		uniformSpecularIntensity = 0, uniformShininess = 0, uniformTextureOffset=0;
 	GLuint uniformColor = 0;
 	glm::mat4 projection = glm::perspective(45.0f, (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 1000.0f);
-		
+	GLfloat  ambientcolorLocation = 0, positionLocation_p1 = 0;
+
 	////Loop mientras no se cierra la ventana
 	while (!mainWindow.getShouldClose())
 	{
-		/*if (ciclos >= CLOCKS_PER_SEC) {
+		if (ciclos >= CLOCKS_PER_SEC) {
 			if (dia) dia = false;
 			else dia = true;
 			ciclos = 0;
 		}
 		else ciclos++;
 		if (dia) mainLight.setIntensity(1.0f);
-		else mainLight.setIntensity(0.4f);*/
+		else mainLight.setIntensity(0.4f);
 
 		// Obtener tipo de camara
 		//    Camara normal
@@ -829,6 +979,8 @@ int main()
 		AnimateHorse();
 		AnimateCow();
 		AnimateButterfly();
+		AnimateEagle();
+		Animatemol();
 
 		if (first) {
 			rotCola = 0.0f;
@@ -849,6 +1001,7 @@ int main()
 			movVacaX = 10.0f; movVacaZ = 0.0f; rotarVaca = 0.0f;
 			rotaAlasButterfly = 0.0f;
 			movMariposaX = 0.0f; movMariposaZ = 0.0f, movMariposaY = 0.0f;
+			rotaAguila = 0.0f; rotaTapaBaul = 0.0f; movAguilaY = 0.0f; movAguilaZ = 0.0f; rotaAlasAguila = 0.0f;
 			first = false;
 		}
 
@@ -860,7 +1013,18 @@ int main()
 		// Clear the window
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		skybox.DrawSkybox(camera.calculateViewMatrix(), projection);
+		
+		glUniform3f(ambientcolorLocation, 1.0f, 0.0f, 0.0f);
+		glUniform3f(positionLocation_p1, -22.5f, 4.7f, 15.4f);
+
+		if (dia) {
+			skyboxdia.DrawSkybox(camera.calculateViewMatrix(), projection);
+		}
+		else {
+
+			skyboxnoche.DrawSkybox(camera.calculateViewMatrix(), projection);
+		}
+
 		shaderList[0].UseShader();
 		uniformModel = shaderList[0].GetModelLocation();
 		uniformProjection = shaderList[0].GetProjectionLocation();
@@ -881,11 +1045,13 @@ int main()
 		/*glm::vec3 lowerLight = camera.getCameraPosition();
 		lowerLight.y -= 0.3f;
 		spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());*/
+		//spotLights[0].SetPos(glm::vec3(1.0f, 0.0f, 1.0f));
 
 		//información al shader de fuentes de iluminación
 		shaderList[0].SetDirectionalLight(&mainLight);
-		//shaderList[0].SetPointLights(pointLights, pointLightCount);
-		//shaderList[0].SetSpotLights(spotLights, spotLightCount);
+		if (!dia) shaderList[0].SetPointLights(pointLights, pointLightCount);
+		else shaderList[0].SetPointLights(pointLights, 1);
+		shaderList[0].SetSpotLights(spotLights, spotLightCount);
 
 		glm::mat4 model(1.0);
 		glm::mat4 modelaux(1.0);
@@ -1133,10 +1299,89 @@ int main()
 		
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(0.0f, 1.06f, 0.8f));
+		model = glm::rotate(model, glm::radians(rotaTapaBaul), glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, -90.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		baulTapa.RenderModel();
 
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(0.247015f, 0.5f + movAguilaY, 3.6825f - movAguilaZ));
+		model = glm::rotate(model, glm::radians(rotaAguila), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		aguila_cuerpo.RenderModel();
+		modelaux = model;
+
+		model = glm::translate(model, glm::vec3(-0.08183f, 0.05386f, 0.083179f));
+		model = glm::rotate(model, glm::radians(rotaAlasAguila), glm::vec3(0.0f, 0.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		aguila_r.RenderModel();
+
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.08183f, 0.05386f, 0.083179f));
+		model = glm::rotate(model, glm::radians(-rotaAlasAguila), glm::vec3(0.0f, 0.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		aguila_l.RenderModel();
+		
+		// arco de piedra 
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(-16.5318f, 0.0f, -24.3136f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		arco.RenderModel();
+
+		// arco de valla
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(8.66738f, 0.451263f, -24.9079f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		valla2.RenderModel();
+
+		// molino
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(15.9798f, 4.84844f, -7.16334f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		molino.RenderModel();
+
+		// lampara 
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(21.8f, 0.0f, -15.4f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		lamp.RenderModel();
+
+		// lampara
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(21.8f, 0.0f, 0.4f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		lamp.RenderModel();
+
+		// lampara
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(21.8f, 0.0f, 15.4f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		lamp.RenderModel();
+
+		// lampara
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(-21.8f, 0.0f, -15.4f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		lamp.RenderModel();
+
+		// molino
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(15.9798f, 8.7f, -7.16334f));
+		model = glm::rotate(model, mov_mol * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		helice_molino.RenderModel();
+
+		// ------------------- ELEMENTOS CON TRANSPARENCIA -----------------------------
 		// arboles
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
@@ -1198,7 +1443,7 @@ int main()
 
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
-		model = glm::translate(model, glm::vec3(22.0f, 0.0f, 20.0f));
+		model = glm::translate(model, glm::vec3(-22.0f, 0.0f, 20.0f));
 		model = glm::rotate(model, 45 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		arbol2.RenderModel();
