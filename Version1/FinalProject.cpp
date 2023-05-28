@@ -75,6 +75,7 @@ Model valla2;
 Model molino;
 Model helice_molino;
 Model lamp;
+Model reflactor;
 
 // caballo
 Model caballo_cabeza;
@@ -103,6 +104,11 @@ Model butterfly_body, butterfly_R, butterfly_L;
 
 // aguila
 Model aguila_cuerpo, aguila_r, aguila_l;
+
+// gato (avatar)
+Model gato_cuerpo;
+Model gato_cabeza;
+Model gato_pata_FR, gato_pata_FL, gato_pata_BR, gato_pata_BL;
 
 // ----------------------------------- VARIABLES DE ANIMACION ----------------------------------
 // caballo
@@ -145,6 +151,13 @@ int velocidad_mol;
 float reproduciranimacion, habilitaranimacion;
 std::string content;
 
+//gato
+int  avanzargato, numeroPatagato;
+bool caminargato;
+float rotargato, rotarCabezagato;
+float rotPatagatoFR, rotPatagatoFL, rotPatagatoBR, rotPatagatoBL;
+float movgatoX, movgatoZ;
+
 // ------------------------- CICLO DIA - NOCHE ---------------------------------
 int ciclos = 0;
 bool dia;
@@ -166,6 +179,8 @@ DirectionalLight mainLight;
 //para declarar varias luces de tipo pointlight
 PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
+SpotLight spotLightsAux[MAX_SPOT_LIGHTS];
+bool spotActivo[2] = {false, false};
 
 // Vertex Shader
 static const char* vShader = "shaders/shader_light.vert";
@@ -290,94 +305,6 @@ void CreateObjects()
 	Mesh* obj5 = new Mesh();
 	obj5->CreateMesh(flechaVertices, flechaIndices, 32, 6);
 	meshList.push_back(obj5);
-
-}
-
-
-
-void CrearCubo()
-{
-	unsigned int cubo_indices[] = {
-		// front
-		0, 1, 2,
-		//2, 3, 0,
-		// right
-		3, 4, 5,
-		//6, 7, 4,
-		// back
-		6, 7, 8,
-		//10, 11, 8,
-
-		// left
-		9, 10, 11,
-		//14, 15, 12,
-		// bottom
-		12, 13, 14,
-		//18, 19, 16,
-		// top
-		15, 16, 17,
-
-		18, 19, 20,
-
-		21, 22, 23
-	};
-
-	GLfloat cubo_vertices[] = {
-		// 1 cara superior L muerte *
-		//x		y		z		S		T			NX		NY		NZ
-		0.0f,-0.5f,0.0f,	0.573f,  0.67f,		-1.0f,	1.0f,	-1.0f,	//0
-		0.5f,0.0f,0.0f,		0.857f,	0.67f,		-1.0f,	1.0f,	-1.0f,	//1
-		0.0f,0.0f,0.5f,		0.714f,	0.99f,		-1.0f,	1.0f,	-1.0f,	//2
-
-		// 2 cara superior L rayo *
-		//x		y		z		S		T			NX		NY		NZ
-		0.5f,0.0f,0.0f,     0.02f,  0.65f,	    -1.0f,	-1.0f,	-1.0f,	//3
-		0.0f,0.5f,0.0f,		0.285f,	0.65f,		-1.0f,	-1.0f,	-1.0f,	//4
-		0.0f,0.0f,0.5f,		0.142f,	0.333f,		-1.0f,	-1.0f,	-1.0f,	//5
-
-		// 3 cara superior signo admiracion  L
-		//x		y		z		S		T			NX		NY		NZ
-		0.0f,0.5f,0.0f,			0.142f,  0.333f,	1.0f,	-1.0f,	-1.0f,	//6
-		-0.5f,0.0f,0.0f,		0.428f,	0.333f,		1.0f,	-1.0f,	-1.0f,	//7
-		0.0f,0.0f,0.5f,			0.285f,	0.666f,		1.0f,	-1.0f,	-1.0f,	//8
-
-		// 4 cara superior fuego L
-		//x		y		z		S		T			NX		NY		NZ
-		-0.5f,0.0f,0.0f,		0.285f,  0.65f,		1.0f,	1.0f,	-1.0f,	//9
-		0.0f,-0.5f,0.0f,		0.56f,	0.65f,		1.0f,	1.0f,	-1.0f,	//10
-		0.0f,0.0f,0.5f,			0.420f,	0.34f,		1.0f,	1.0f,	-1.0f,	//11
-
-		// 1 cara inferior radioactivo L
-		//x		y		z		S		T			NX		NY		NZ
-		-0.5f,0.0f,0.0f,		0.573f,	0.66f,		1.0f,	1.0f,	1.0f,	//12
-		0.0f,-0.5f,0.0f,		0.855f,	0.66f,		1.0f,	1.0f,	1.0f,	//13
-		0.0f,0.0f,-0.5f,		0.714f,  0.333f,	1.0f,	1.0f,	1.0f,	//14
-
-		// 2 cara inferior  nadando 
-		//x		y		z		S		T			NX		NY		NZ
-		0.0f,-0.5f,0.0f,		0.429f, 0.33f,		-1.0f,	1.0f,	1.0f,	//15
-		0.5f,0.0f,0.0f,			0.713f,	0.33f,		-1.0f,	1.0f,	1.0f,	//16
-		0.0f,0.0f,-0.5f,		0.571f,	0.66f,		-1.0f,	1.0f,	1.0f,	//17
-
-		// 3 cara inferior electrocutar 
-		//x		y		z		S		T			NX		NY		NZ
-		0.5f,0.0f,0.0f,			0.999f,	0.33f,		-1.0f,	-1.0f,	1.0f,	//18
-		0.0f,0.5f,0.0f,			0.719f,  0.33f,		-1.0f,	-1.0f,	1.0f,	//19
-		0.0f,0.0f,-0.5f,		0.856f,	0.66f,		-1.0f,	-1.0f,	1.0f,	//20
-
-		// 4 cara inferior  caer 
-		//x		y		z		S		T			NX		NY		NZ
-		0.0f,0.5f,0.0f,			0.142f,  0.33f,		1.0f,	-1.0f,	1.0f,	//21
-		-0.5f,0.0f,0.0f,		0.420f,	0.33f,		1.0f,	-1.0f,	1.0f,	//22
-		0.0f,0.0f,-0.5f,		0.283f,	0.01f,		1.0f,	-1.0f,	1.0f,	//23
-
-	};
-
-
-
-	Mesh* dado = new Mesh();
-	dado->CreateMesh(cubo_vertices, cubo_indices, 192, 24);
-	meshList.push_back(dado);
 
 }
 
@@ -831,13 +758,32 @@ void Animatemol() {
 	mov_mol += mov_molof * deltaTime;
 }
 
+void AnimarGato() {
+	if (caminargato == 1) {
+		//rotPatagatoFR = 0.0f; rotPatagatoFL = 0.0f; rotPatagatoBR = 0.0f; rotPatagatoBL = 0.0f;
+		if (rotPatagatoFL >= 80.0f) rotPatagatoFL = -80.0f;
+		else rotPatagatoFL += 2.0f * deltaTime;
+		if (rotPatagatoBR >= 80.0f) rotPatagatoBR = -80.0f;
+		else rotPatagatoBR += 2.0f * deltaTime;
+		if (rotPatagatoBL <= -80.0f) rotPatagatoBL = 80.0f;
+		else rotPatagatoBL -= 2.0f * deltaTime;
+		if (rotPatagatoFR <= -80.0f) rotPatagatoFR = 80.0f;
+		else rotPatagatoFR -= 2.0f * deltaTime;
+		rotargato += 0.25f * deltaTime;
+		movgatoX = 3 * cos(glm::radians(rotargato));
+		movgatoZ = 3 * sin(glm::radians(rotargato));
+	}
+	else {
+
+	}
+}
+
 int main()
 {
 	mainWindow = Window(1366, 768); // 1280, 1024 or 1024, 768
 	mainWindow.Initialise();
 
 	CreateObjects();
-	CrearCubo();
 	CreateShaders();
 	srand(time(NULL));
 
@@ -890,6 +836,8 @@ int main()
 	helice_molino.LoadModel("Models/helice-molino.obj");
 	lamp = Model();
 	lamp.LoadModel("Models/lamp.obj");
+	reflactor = Model();
+	reflactor.LoadModel("Models/reflactor.obj");
 
 	caballo_cuerpo = Model();
 	caballo_cuerpo.LoadModel("Models/caballo_cuerpo.obj");
@@ -948,6 +896,18 @@ int main()
 	aguila_r.LoadModel("Models/aguila_Right.obj");
 	aguila_l = Model();
 	aguila_l.LoadModel("Models/aguila_left.obj");
+
+	gato_cuerpo.LoadModel("Models/gato_cuerpo.obj");
+	gato_cabeza = Model();
+	gato_cabeza.LoadModel("Models/gato_cabeza.obj");
+	gato_pata_FR = Model();
+	gato_pata_FR.LoadModel("Models/gato_pata_FR.obj");
+	gato_pata_FL = Model();
+	gato_pata_FL.LoadModel("Models/gato_pata_FL.obj");
+	gato_pata_BR = Model();
+	gato_pata_BR.LoadModel("Models/gato_pata_BR.obj");
+	gato_pata_BL = Model();
+	gato_pata_BL.LoadModel("Models/gato_pata_BL.obj");
 
 	std::vector<std::string> skyboxFacesdia;
 	
@@ -1018,13 +978,23 @@ int main()
 	pointLightCount++;
 
 	unsigned int spotLightCount = 0;
-	//linterna
-	spotLights[0] = SpotLight(0.0f, 1.0f, 1.0f,
-		0.0f, 2.0f,
-		-5.0f, 0.0f, 10.0f,
-		1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f,
-		10.0f);
+	////luces para la cabaña
+	spotLights[0] = SpotLight(0.0f, 1.0f, 0.0f,
+		5.0f, 5.0f,
+		15.0f, 1.5f, -20.0f,
+		-0.5f, 0.0f, 0.5f,
+		1.0f, 0.1f, 0.01f,
+		20.0f);
+	spotLightsAux[0] = spotLights[0];
+	spotLightCount++;
+
+	spotLights[1] = SpotLight(0.0f, 0.0f, 1.0f,
+		5.0f, 5.0f,
+		-15.0f, 1.5f, -20.0f,
+		0.5f, 0.0f, 0.5f,
+		1.0f, 0.1f, 0.01f,
+		20.0f);
+	spotLightsAux[1] = spotLights[1];
 	spotLightCount++;
 
 	// ------------------------------ VARIABLES ANIMACION ----------------------------
@@ -1073,9 +1043,17 @@ int main()
 	mov_mol = 0.0f; mov_molof = 0.2f;
 	velocidad_mol = (rand() % 5) + 1;
 
+	//gato
+	avanzargato = 1; numeroPatagato = 0;
+	rotargato = 0.0f;
+	rotPatagatoFR = 0.0f; rotPatagatoFL = 0.0f; rotPatagatoBR = 0.0f; rotPatagatoBL = 0.0f;
+	caminargato = true;
+	movgatoX = 5.0f; movgatoZ = 0.0f;
+
 	// ------------- ILUMINACION -----------------
 	ciclos = 0;
 	dia = true;
+	int indice = 0;
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
 		uniformSpecularIntensity = 0, uniformShininess = 0, uniformTextureOffset=0;
@@ -1117,6 +1095,7 @@ int main()
 		AnimateButterfly();
 		AnimateEagle();
 		Animatemol();
+		AnimarGato();
 
 		if (first) {
 			rotCola = 0.0f;
@@ -1138,6 +1117,8 @@ int main()
 			rotaAlasButterfly = 0.0f;
 			movMariposaX = 0.0f; movMariposaZ = 0.0f, movMariposaY = 0.0f;
 			rotaAguila = 0.0f; rotaTapaBaul = 0.0f; movAguilaY = 0.0f; movAguilaZ = 0.0f; rotaAlasAguila = 0.0f;
+			rotPatagatoFR = 0.0f; rotPatagatoFL = 0.0f; rotPatagatoBR = 0.0f; rotPatagatoBL = 0.0f;
+			movgatoX = 5.0f; movgatoZ = 0.0f; rotargato = 0.0f;
 			first = false;
 		}
 
@@ -1191,7 +1172,20 @@ int main()
 		shaderList[0].SetDirectionalLight(&mainLight);
 		if (!dia) shaderList[0].SetPointLights(pointLights, pointLightCount);
 		else shaderList[0].SetPointLights(pointLights, 1);
-		shaderList[0].SetSpotLights(spotLights, spotLightCount);
+		// ver que luces están encendidas
+		if (mainWindow.getFaro1() == true) spotActivo[0] = true;
+		else spotActivo[0] = false;
+		if (mainWindow.getFaro2() == true) spotActivo[1] = true;
+		else spotActivo[1] = false;
+
+		indice = 0;
+		for (int i = 0; i < spotLightCount; i++) {
+			if (spotActivo[i] == true) {
+				spotLightsAux[indice] = spotLights[i];
+				indice++;
+			}
+		}
+		shaderList[0].SetSpotLights(spotLightsAux, indice);
 
 		glm::mat4 model(1.0);
 		glm::mat4 modelaux(1.0);
@@ -1215,6 +1209,7 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.5f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		cabana_madera.RenderModel();
 
 		model = glm::mat4(1.0);
@@ -1222,6 +1217,7 @@ int main()
 		model = glm::translate(model, glm::vec3(-22.0f, 0.0f, 3.0f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		roca.RenderModel();
 
 		model = glm::mat4(1.0);
@@ -1229,19 +1225,92 @@ int main()
 		model = glm::translate(model, glm::vec3(-22.0f, 0.0f, 10.0f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		valla.RenderModel();
-				
+		
+		// reflactores
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(15.0f, 1.5f, -20.0f));
+		model = glm::rotate(model, 45.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		reflactor.RenderModel();
+
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(-15.0f, 1.5f, -20.0f));
+		model = glm::rotate(model, 135.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		reflactor.RenderModel();
+		
+		// ----- Gato ----------
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(10.0f + movgatoX, 0.0f, -3.0f + movgatoZ));
+		model = glm::rotate(model, -204.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, 90.0f * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
+		model = glm::rotate(model, glm::radians(-rotargato), glm::vec3(0.0f, 0.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		gato_cuerpo.RenderModel();
+		modelaux = model;
+
+		// cabeza
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f, 2.11506f - 2.204f, 1.25726f - 0.55453f));
+		model = glm::rotate(model, glm::sin(glm::radians(-rotarCabezagato)) / 8, glm::vec3(0.0f, 0.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		gato_cabeza.RenderModel();
+
+		// pata delantera derecha
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f - 0.229705f, 1.56881f - 2.1501f, 0.732868f - 0.55453f));
+		model = glm::rotate(model, glm::sin(glm::radians(-rotPatagatoFR)) / 4, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		gato_pata_FR.RenderModel();
+
+		// pata delantera izquierda
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f + 0.270485f, 1.57759f - 2.1501f, 0.691724f - 0.55453f));
+		model = glm::rotate(model, glm::sin(glm::radians(-rotPatagatoFL)) / 4, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		gato_pata_FL.RenderModel();
+
+		// pata trasera derecha
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f - 0.28793f, 1.72511f - 2.1501f, -0.55453f - 0.898112f));
+		model = glm::rotate(model, glm::sin(glm::radians(-rotPatagatoBR)) / 4, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		gato_pata_BR.RenderModel();
+
+		// pata trasera izquierda
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f + 0.274319f, 1.72279f - 2.1501f, -0.55453f - 0.91318f));
+		model = glm::rotate(model, glm::sin(glm::radians(-rotPatagatoBL)) / 4, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		gato_pata_BL.RenderModel();
+
 		//vacas
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
 		model = glm::translate(model, glm::vec3(-10.0f + movVacaX, 1.05484f, 0.658324f + movVacaZ));
 		model = glm::rotate(model, glm::radians(-rotarVaca), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		vaca_cuerpo.RenderModel();
 		modelaux = model;
 		
 		model = glm::translate(model, glm::vec3(0.0f, 0.972919f - 1.05484f, 1.26853f - 0.658324f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		vaca_cabeza.RenderModel();
 		
 		model = modelaux;
@@ -1249,42 +1318,49 @@ int main()
 		model = glm::rotate(model, glm::sin(glm::radians(rotaCola1ZV)) / 4, glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::rotate(model, glm::sin(glm::radians(rotaCola1XV)) / 2, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		vaca_cola1.RenderModel();
 		
 		model = glm::translate(model, glm::vec3(0.0f, 1.47964f - 1.83722f, - 1.36475f + 1.30268f));
 		model = glm::rotate(model, glm::sin(glm::radians(rotaCola2ZV)) / 4, glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::rotate(model, glm::sin(glm::radians(rotaCola2XV)) / 2, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		vaca_cola2.RenderModel();
 		
 		model = glm::translate(model, glm::vec3(0.0f, 0.766128f - 1.47964f, - 1.37366f + 1.36475f));
 		model = glm::rotate(model, glm::sin(glm::radians(rotaCola3ZV)) / 4, glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::rotate(model, glm::sin(glm::radians(rotaCola3XV)) / 2, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		vaca_cola3.RenderModel();
 		
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(0.0f - 0.428158f, 0.774082f - 1.05484f, 0.613384f - 0.658324f));
 		model = glm::rotate(model, glm::sin(glm::radians(-rotPataVacaFR)) / 4, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		vaca_pataFR.RenderModel();
 		
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(0.0f + 0.413954f, 0.783064f - 1.05484f, 0.625003f - 0.658324f));
 		model = glm::rotate(model, glm::sin(glm::radians(-rotPataVacaFL)) / 4, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		vaca_pataFL.RenderModel();
 		
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(0.0f - 0.50673f, 0.999737f - 1.05484f, - 0.948187f - 0.658324f));
 		model = glm::rotate(model, glm::sin(glm::radians(-rotPataVacaBR)) / 4, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		vaca_pataBR.RenderModel();
 		
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(0.0f + 0.486654f, 1.00201f - 1.05484f, - 0.903786f - 0.658324f));
 		model = glm::rotate(model, glm::sin(glm::radians(-rotPataVacaBL)) / 4, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		vaca_pataBL.RenderModel();
 		
 		model = glm::mat4(1.0);
@@ -1292,6 +1368,7 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 17.8f));
 		model = glm::rotate(model, glm::radians(43.6f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		vaca.RenderModel();
 		
 		model = glm::mat4(1.0);
@@ -1299,6 +1376,7 @@ int main()
 		model = glm::translate(model, glm::vec3(10.0f, 0.0f, -15.0f));
 		model = glm::rotate(model, glm::radians(-118.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		vaca.RenderModel();
 		
 		model = glm::mat4(1.0);
@@ -1306,6 +1384,7 @@ int main()
 		model = glm::translate(model, glm::vec3(-22.3f, 0.0f, 10.3f));
 		model = glm::rotate(model, 63.8f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		vaca.RenderModel();
 		
 		// ------------------------- caballo ------------------------------------
@@ -1314,6 +1393,7 @@ int main()
 		model = glm::translate(model, glm::vec3(11.0f + 0.0f, 2.1501f, -3.0f + 0.55453f));
 		model = glm::rotate(model, -204.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo_cuerpo.RenderModel();
 		modelaux = model;
 
@@ -1321,11 +1401,13 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, 2.204f - 2.1501f, -0.55453f - 1.25617f));
 		model = glm::rotate(model, glm::sin(glm::radians(rotCola)) / 6, glm::vec3(0.0f, 0.0f, 1.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo_cola.RenderModel();
 		
 		model = glm::translate(model, glm::vec3(0.0f, 1.93774f - 2.204f, 1.25617f - 1.4958f));
 		model = glm::rotate(model, glm::sin(glm::radians(rotColaPunta)) / 4, glm::vec3(0.0f, 0.0f, 1.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo_colaPunta.RenderModel();
 
 		// cabeza
@@ -1333,6 +1415,7 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, 2.11506f - 2.204f, 1.25726f - 0.55453f));
 		model = glm::rotate(model, glm::sin(glm::radians(rotaCabeza)) / 8, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo_cabeza.RenderModel();
 
 		// pata delantera derecha
@@ -1340,11 +1423,13 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f - 0.229705f, 1.56881f - 2.1501f, 0.732868f - 0.55453f));
 		model = glm::rotate(model, PI * sin(glm::radians(rotPataFRU)) / 3, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo_pataFRU.RenderModel();
 
 		model = glm::translate(model, glm::vec3(0.229705f - 0.247778f, 0.784822f - 1.56881f, 0.654164f - 0.732868f));
 		model = glm::rotate(model, PI * sin(glm::radians(rotPataFRD)) / 2, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo_pataFRD.RenderModel();
 
 		// pata delantera izquierda
@@ -1352,11 +1437,13 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f + 0.270485f, 1.57759f - 2.1501f, 0.691724f - 0.55453f));
 		model = glm::rotate(model, PI * sin(glm::radians(rotPataFLU)) / 3, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo_pataFLU.RenderModel();
 
 		model = glm::translate(model, glm::vec3(0.273987f - 0.270485f, 0.8176f - 1.57759f, 0.661656f - 0.691724f));
 		model = glm::rotate(model, PI * sin(glm::radians(rotPataFLD)) / 2, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo_pataFLD.RenderModel();
 
 		// pata trasera derecha
@@ -1364,11 +1451,13 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f - 0.28793f, 1.72511f - 2.1501f, -0.55453f - 0.898112f));
 		model = glm::rotate(model, PI * sin(glm::radians(rotPataBRU)) / 3.5f, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo_pataBRU.RenderModel();
 
 		model = glm::translate(model, glm::vec3(0.28793f - 0.210473f, 0.85076f - 1.72511f, 0.898112f - 1.1546f));
 		model = glm::rotate(model, PI * sin(glm::radians(rotPataBRD)) / 2, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo_pataBRD.RenderModel();
 
 		// pata trasera izquierda
@@ -1376,11 +1465,13 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f + 0.274319f, 1.72279f - 2.1501f, -0.55453f - 0.91318f));
 		model = glm::rotate(model, PI * sin(glm::radians(rotPataBLU)) / 3.5f, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo_pataBLU.RenderModel();
 
 		model = glm::translate(model, glm::vec3(0.216699f - 0.274319f, 0.874732 - 1.72279f, 0.91318f - 1.16716f));
 		model = glm::rotate(model, PI * sin(glm::radians(rotPataBLD)) / 2, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo_pataBLD.RenderModel();
 
 		model = glm::mat4(1.0);
@@ -1388,6 +1479,7 @@ int main()
 		model = glm::translate(model, glm::vec3(-13.0f, 0.0f, -14.0f));
 		model = glm::rotate(model, -82.4f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo.RenderModel();
 		
 		model = glm::mat4(1.0);
@@ -1395,6 +1487,7 @@ int main()
 		model = glm::translate(model, glm::vec3(-13.2f, 0.0f, 15.2f));
 		model = glm::rotate(model, 28.4f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo.RenderModel();
 		
 		model = glm::mat4(1.0);
@@ -1402,6 +1495,7 @@ int main()
 		model = glm::translate(model, glm::vec3(8.0f, 0.0f, 13.5f));
 		model = glm::rotate(model, 60.5f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		caballo.RenderModel();
 		
 		//Fuente 
@@ -1410,6 +1504,7 @@ int main()
 		model = glm::translate(model, glm::vec3(12.0f, 0.0f, 12.0f));
 		model = glm::rotate(model, -90.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		fuente.RenderModel();
 
 		//vela
@@ -1418,6 +1513,7 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, 2.3465f, 8.9925f));
 		//model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		vela.RenderModel();
 		
 		// estrella
@@ -1426,6 +1522,7 @@ int main()
 		model = glm::translate(model, glm::vec3(0.76f, 7.1461f, 4.34f));
 		model = glm::rotate(model, 90.0f * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		estrella.RenderModel();
 
 		// estrella animada por keyframes
@@ -1438,6 +1535,7 @@ int main()
 		model = glm::rotate(model, 90.0f * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		estrella.RenderModel();
 
 		// baul
@@ -1447,6 +1545,7 @@ int main()
 		modelaux = model;
 		model = glm::rotate(model, -90.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		baulCuerpo.RenderModel();
 		
 		model = modelaux;
@@ -1454,6 +1553,7 @@ int main()
 		model = glm::rotate(model, glm::radians(rotaTapaBaul), glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, -90.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		baulTapa.RenderModel();
 
 		model = glm::mat4(1.0);
@@ -1462,18 +1562,21 @@ int main()
 		model = glm::rotate(model, glm::radians(rotaAguila), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		aguila_cuerpo.RenderModel();
 		modelaux = model;
 
 		model = glm::translate(model, glm::vec3(-0.08183f, 0.05386f, 0.083179f));
 		model = glm::rotate(model, glm::radians(rotaAlasAguila), glm::vec3(0.0f, 0.0f, 1.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		aguila_r.RenderModel();
 
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(0.08183f, 0.05386f, 0.083179f));
 		model = glm::rotate(model, glm::radians(-rotaAlasAguila), glm::vec3(0.0f, 0.0f, 1.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		aguila_l.RenderModel();
 		
 		// arco de piedra 
@@ -1481,6 +1584,7 @@ int main()
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
 		model = glm::translate(model, glm::vec3(-16.5318f, 0.0f, -24.3136f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		arco.RenderModel();
 
 		// arco de valla
@@ -1488,6 +1592,7 @@ int main()
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
 		model = glm::translate(model, glm::vec3(8.66738f, 0.451263f, -24.9079f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		valla2.RenderModel();
 
 		// molino
@@ -1495,6 +1600,7 @@ int main()
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
 		model = glm::translate(model, glm::vec3(15.9798f, 4.84844f, -7.16334f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		molino.RenderModel();
 
 		// lampara 
@@ -1502,6 +1608,7 @@ int main()
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
 		model = glm::translate(model, glm::vec3(21.8f, 0.0f, -15.4f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		lamp.RenderModel();
 
 		// lampara
@@ -1509,6 +1616,7 @@ int main()
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
 		model = glm::translate(model, glm::vec3(21.8f, 0.0f, 0.4f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		lamp.RenderModel();
 
 		// lampara
@@ -1516,6 +1624,7 @@ int main()
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
 		model = glm::translate(model, glm::vec3(21.8f, 0.0f, 15.4f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		lamp.RenderModel();
 
 		// lampara
@@ -1523,6 +1632,7 @@ int main()
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
 		model = glm::translate(model, glm::vec3(-21.8f, 0.0f, -15.4f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		lamp.RenderModel();
 
 		// molino
@@ -1531,6 +1641,7 @@ int main()
 		model = glm::translate(model, glm::vec3(15.9798f, 8.7f, -7.16334f));
 		model = glm::rotate(model, mov_mol * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		helice_molino.RenderModel();
 
 		// ------------------- ELEMENTOS CON TRANSPARENCIA -----------------------------
@@ -1542,6 +1653,7 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		arbol2.RenderModel();
 
 		model = glm::mat4(1.0);

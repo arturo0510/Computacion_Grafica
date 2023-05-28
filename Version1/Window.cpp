@@ -117,6 +117,10 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 	}
 	// banderas por teclado
 	if (key == GLFW_KEY_B) theWindow->abrirBaul = true;
+	if (key == GLFW_KEY_1) theWindow->faro1 = false;
+	if (key == GLFW_KEY_2) theWindow->faro1 = true;
+	if (key == GLFW_KEY_3) theWindow->faro2 = false;
+	if (key == GLFW_KEY_4) theWindow->faro2 = true;
 
 	if (key >= 0 && key < 1024)
 	{

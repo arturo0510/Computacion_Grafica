@@ -26,6 +26,9 @@ public:
 	bool getabrirBaul() { return abrirBaul; }
 	void setabriBaul(bool abrir) { abrirBaul = abrir; }
 
+	bool getFaro1() { return faro1; }
+	bool getFaro2() { return faro2; }
+
 	~Window();
 private:
 	GLFWwindow* mainWindow;
@@ -46,6 +49,8 @@ private:
 	
 	// Banderas por teclado
 	bool abrirBaul = false;
+	bool faro1 = false;
+	bool faro2 = false;
 
 	static void ManejaTeclado(GLFWwindow* window, int key, int code, int action, int mode);
 	static void ManejaMouse(GLFWwindow* window, double xPos, double yPos);
