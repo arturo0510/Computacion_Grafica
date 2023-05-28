@@ -76,6 +76,9 @@ changes compared to the previous version. Each version introduces the following 
   - Inclusion of a sixth Point Light (well)
   - Correction of turning off Point Light during the day
   - *Files*: [FinalProjectv4.cpp](/Versiones/FinalProjectv4.cpp), [Windowv4.cpp](/Versiones/Windowv4.cpp), [Windowv4.h](/Versiones/Windowv4.h), [shader_lightv4.frag](/Versiones/shader_lightv4.frag)
+- **Version 5**
+  - Animation by KeyFrames: Star
+  - *Files:* [FinalProjectv5.cpp](/Versiones/FinalProjectv5.cpp)
 
 To facilitate the use of the repository, within [Version 1](/Version1), you will find the codes in their latest version, which are updated
 according to each change made.
