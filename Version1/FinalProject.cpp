@@ -141,6 +141,10 @@ bool animAguila, openTapa, regresaAguila, arribaAlas;
 float mov_mol, mov_molof;
 int velocidad_mol;
 
+// estrella - keyframes
+float reproduciranimacion, habilitaranimacion;
+std::string content;
+
 // ------------------------- CICLO DIA - NOCHE ---------------------------------
 int ciclos = 0;
 bool dia;
@@ -168,6 +172,8 @@ static const char* vShader = "shaders/shader_light.vert";
 
 // Fragment Shader
 static const char* fShader = "shaders/shader_light.frag";
+
+void inputKeyframes(bool* keys);
 
 using namespace std;
 
@@ -380,6 +386,132 @@ void CreateShaders()
 	Shader *shader1 = new Shader();
 	shader1->CreateFromFiles(vShader, fShader);
 	shaderList.push_back(*shader1);
+}
+
+bool animacion = false;
+
+// variables afectadas por keyframes
+//NEW// Keyframes
+float posXStar = 0.0, posYStar = 0.0, posZStar = 0.0;	// translate - Estado Inicial
+float movStar_x = 0.0f, movStar_y = 0.0f;					//dezplazamiento en X o Y
+float giroStar = 0;										//rotate
+
+#define MAX_FRAMES 30		//Numero máximo de frames
+int i_max_steps = 90;		//cuantas interpolaciones se van a obtener - fluidez de la animacion
+int i_curr_steps = 15;
+typedef struct _frame
+{
+	//Variables para GUARDAR Key Frames
+	float movStar_x;		//Variable para PosicionX
+	float movStar_y;		//Variable para PosicionY
+	float movStar_xInc;		//Variable para IncrementoX
+	float movStar_yInc;		//Variable para IncrementoY
+	float giroStar;
+	float giroStarInc;
+}FRAME;
+
+FRAME KeyFrame[MAX_FRAMES];
+int FrameIndex = 15;			//introducir datos
+bool play = false;
+int playIndex = 0;
+
+void readFile() {
+	int i = 0, linead = 0;
+	std::string indice, valor;
+	int index;
+	float value;
+	std::ifstream fileStream("KeyFrames.txt", std::ios::in);
+
+	if (!fileStream.is_open()) {
+		printf("Failed to read %s! File doesn't exist.", "KeyFrames.txt");
+		content = "";
+	}
+
+	std::string line = "";
+	while (!fileStream.eof()) {
+		std::getline(fileStream, line);
+
+		if (linead < 10) indice = line.substr(9, 1);
+		else indice = line.substr(9, 2);
+		index = std::stoi(indice);
+		switch (i) {
+		case 0:
+			if (linead < 10) valor = line.substr(24, line.size() - 26);
+			else valor = line.substr(25, line.size() - 27);
+			value = std::stof(valor);
+			KeyFrame[index].movStar_x = value;
+			std::cout << "KeyFrame[" << index << "].movStar_x = " << value << ";" << std::endl;
+			i++;
+			break;
+		case 1:
+			if (linead < 10) valor = line.substr(24, line.size() - 26);
+			else valor = line.substr(25, line.size() - 27);
+			value = std::stof(valor);
+			KeyFrame[index].movStar_y = value;
+			std::cout << "KeyFrame[" << index << "].movStar_y = " << value << ";" << std::endl;
+			i++;
+			break;
+		case 2:
+			if (linead < 10) valor = line.substr(23, line.size() - 25);
+			else valor = line.substr(24, line.size() - 26);
+			value = std::stof(valor);
+			KeyFrame[index].giroStar = value;
+			std::cout << "KeyFrame[" << index << "].giroStar = " << value << ";\n" << std::endl;
+			i = 0;
+			linead++;
+			break;
+		}
+	}
+	fileStream.close();
+}
+
+void resetElements(void) {
+	movStar_x = KeyFrame[0].movStar_x;
+	movStar_y = KeyFrame[0].movStar_y;
+	giroStar = KeyFrame[0].giroStar;
+}
+
+void interpolation(void) {
+	KeyFrame[playIndex].movStar_xInc = (KeyFrame[playIndex + 1].movStar_x - KeyFrame[playIndex].movStar_x) / i_max_steps;
+	KeyFrame[playIndex].movStar_yInc = (KeyFrame[playIndex + 1].movStar_y - KeyFrame[playIndex].movStar_y) / i_max_steps;
+	KeyFrame[playIndex].giroStarInc = (KeyFrame[playIndex + 1].giroStar - KeyFrame[playIndex].giroStar) / i_max_steps;
+}
+
+void animate(void) {
+	//Movimiento del objeto
+	if (play)
+	{
+		if (i_curr_steps >= i_max_steps) //end of animation between frames?
+		{
+			playIndex++;
+			printf("playindex : %d\n", playIndex);
+			if (playIndex > FrameIndex - 2)	//end of total animation?
+			{
+				printf("Frame index= %d\n", FrameIndex);
+				printf("termina anim\n");
+				playIndex = 0;
+				play = false;
+			}
+			else //Next frame interpolations
+			{
+				//printf("entro aquí\n");
+				i_curr_steps = 0; //Reset counter
+				//Interpolation
+				interpolation();
+			}
+		}
+		else
+		{
+			//printf("se quedó aqui\n");
+			//printf("max steps: %f", i_max_steps);
+			//Draw animation
+			movStar_x += KeyFrame[playIndex].movStar_xInc;
+			movStar_y += KeyFrame[playIndex].movStar_yInc;
+			giroStar += KeyFrame[playIndex].giroStarInc;
+			i_curr_steps++;
+		}
+
+	}
 }
 
 // Animacion caballo
@@ -940,6 +1072,7 @@ int main()
 	//molino
 	mov_mol = 0.0f; mov_molof = 0.2f;
 	velocidad_mol = (rand() % 5) + 1;
+
 	// ------------- ILUMINACION -----------------
 	ciclos = 0;
 	dia = true;
@@ -949,6 +1082,9 @@ int main()
 	GLuint uniformColor = 0;
 	glm::mat4 projection = glm::perspective(45.0f, (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 1000.0f);
 	GLfloat  ambientcolorLocation = 0, positionLocation_p1 = 0;
+
+	glm::vec3 posStar = glm::vec3(2.0f, 0.0f, 0.0f);
+	readFile();
 
 	////Loop mientras no se cierra la ventana
 	while (!mainWindow.getShouldClose())
@@ -1009,6 +1145,10 @@ int main()
 		glfwPollEvents();
 		camera.keyControl(mainWindow.getsKeys(), deltaTime);
 		camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+
+		// KeyFrames
+		inputKeyframes(mainWindow.getsKeys());
+		animate();
 
 		// Clear the window
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -1288,6 +1428,18 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		estrella.RenderModel();
 
+		// estrella animada por keyframes
+		model = glm::mat4(1.0);
+		if (camera.getIsometric()) model = camera.ConfIsometric(model);
+		model = glm::translate(model, glm::vec3(0.76f, 7.1461f, 4.34f));
+		posStar = glm::vec3(posXStar + movStar_x, posYStar, posZStar + movStar_y);
+		model = glm::translate(model, posStar);
+		model = glm::rotate(model, glm::radians(giroStar), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, 90.0f * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		estrella.RenderModel();
+
 		// baul
 		model = glm::mat4(1.0);
 		if (camera.getIsometric()) model = camera.ConfIsometric(model);
@@ -1534,4 +1686,26 @@ int main()
 	}
 
 	return 0;
+}
+
+void inputKeyframes(bool* keys) {
+	if (keys[GLFW_KEY_SPACE]) {
+		if (reproduciranimacion < 1) {
+			if (play == false && (FrameIndex > 1)) {
+				resetElements();
+				//First Interpolation				
+				interpolation();
+				play = true;
+				playIndex = 0;
+				i_curr_steps = 0;
+				reproduciranimacion++;
+				printf("\n presiona 0 para habilitar reproducir de nuevo la animación'\n");
+				habilitaranimacion = 0;
+			}
+			else play = false;
+		}
+	}
+	if (keys[GLFW_KEY_0]) {
+		if (habilitaranimacion < 1) reproduciranimacion = 0;
+	}
 }
