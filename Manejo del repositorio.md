@@ -76,6 +76,9 @@ de hacer cambios significativos en cuanto a la versión anterior. En general, ca
   - Inclusión de una sexta Point Light (pozo)
   - Correción apagado de luces de tipo Point Light durante el día
   - *Archivos:* [FinalProjectv4.cpp](/Versiones/FinalProjectv4.cpp), [Windowv4.cpp](/Versiones/Windowv4.cpp), [Windowv4.h](/Versiones/Windowv4.h), [shader_lightv4.frag](/Versiones/shader_lightv4.frag)
+- **Versión 5**
+  - Animación por KeyFrames: Estrella
+  - *Archivos:* [FinalProjectv5.cpp](/Versiones/FinalProjectv5.cpp)
 
 Con el fin de facilitar el uso del repositorio, dentro de [Versión 1](/Version1) se encuentran los códigos en su última versión,
 los cuales se van actualizando de acuerdo a cada cambio que se va realizando.
