@@ -79,6 +79,10 @@ de hacer cambios significativos en cuanto a la versión anterior. En general, ca
 - **Versión 5**
   - Animación por KeyFrames: Estrella
   - *Archivos:* [FinalProjectv5.cpp](/Versiones/FinalProjectv5.cpp)
+- **Versión 5.1**
+  - Luces de tipo Spot Light en el escenario
+  - Inclusión del personaje principal (gato)
+  - *Archivos:* [FinalProjectv5-1.cpp](/Versiones/FinalProjectv5-1.cpp), [Windowv5-1.cpp](/Versiones/Windowv5-1.cpp), [Windowv5-1.h](/Versiones/Windowv5-1.h), 
 
 Con el fin de facilitar el uso del repositorio, dentro de [Versión 1](/Version1) se encuentran los códigos en su última versión,
 los cuales se van actualizando de acuerdo a cada cambio que se va realizando.
@@ -86,3 +90,4 @@ los cuales se van actualizando de acuerdo a cada cambio que se va realizando.
 Si desea consultar, en código, cuáles han sido los cambios más específicos, puede ir a un commit en especial, en donde puede observar sobre
 que archivos está señalando el commit, y que cambios se visualizan (sobre todo para los códigos)
 
+Si desea ejecutar el archivo, descargue el archivo [ejecutable](/EJECUTABLE.zip), y en la carpeta en donde lo descomprima, incluya las carpetas [Models](/Models) y [Textures](/Textures). Finalmente ejecute el archivo `EXE`
