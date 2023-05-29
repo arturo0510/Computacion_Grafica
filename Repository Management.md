@@ -79,6 +79,10 @@ changes compared to the previous version. Each version introduces the following 
 - **Version 5**
   - Animation by KeyFrames: Star
   - *Files:* [FinalProjectv5.cpp](/Versiones/FinalProjectv5.cpp)
+- **Version 5.1**
+  - Spoth Lights
+  - Inclusion of main character (cat)
+  - *Files:* [FinalProjectv5-1.cpp](/Versiones/FinalProjectv5-1cpp), [Windowv5-1.cpp](/Versiones/Windowv5-1.cpp), [Windowv5-1.h](/Versiones/Windowv5-1.h), 
 
 To facilitate the use of the repository, within [Version 1](/Version1), you will find the codes in their latest version, which are updated
 according to each change made.
@@ -86,4 +90,4 @@ according to each change made.
 If you want to check, the more specific changes that have been made, you can go to a specific commit, where you can see
 the files the commit is referring to and the changes made (especially for the codes).
 
-
+If you want to run the project, you need to download the [executable](/EJECUTABLE.zip) file, and in the folder where do you extract it, include the [Models](/Models) and [Textures](/Textures) folders. Finally, run the file `EXE`
